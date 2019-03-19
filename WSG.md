@@ -38,9 +38,9 @@
 		`git add -u` 表示添加编辑或者删除的文件，不包括新添加的文件
 
 - git rm filename  
-	**git rm filename 指的是直接将删除文件放进暂存区(如果想撤销就是git reset HEAD -- filename, 撤销暂存区区，放回工作区。然后git checkout -- filename, 撤销工作区的修改)， 所以必须git commit 提交到版本库。**   
+	**`git rm filename` 指的是直接将删除文件放进暂存区(如果想撤销就是git reset HEAD -- filename, 撤销暂存区区，放回工作区。然后git checkout -- filename, 撤销工作区的修改)， 所以必须git commit 提交到版本库。**   
 
-	**如果时rm filename, 是在工作区将filename删除(如果想撤销，直接git checkout -- filename,撤销工作区的修改)，接下来是git add 提交到暂存区， 最后是git commit 提交到版本库**   
+	**如果是 `rm filename`, 是在工作区将filename删除(如果想撤销，直接git checkout -- filename,撤销工作区的修改)，接下来是git add 提交到暂存区， 最后是git commit 提交到版本库**   
  
 
 		`git rm '文件名'` 从版本库里面删除文件  
@@ -52,9 +52,9 @@
 
 - git diff
 
-		git diff 比较的是工作区文件与暂存区文件的区别（上次git add 的内容）
+		git diff filename 比较的是工作区文件与暂存区文件的区别（上次git add 的内容）
 
-		git diff --cached 比较的是暂存区的文件与仓库分支里（上次git commit 后的内容）的区别
+		git diff --cached filenam 比较的是暂存区的文件与仓库分支里（上次git commit 后的内容）的区别
 		
 		git diff HEAD -- filename 比较的是工作区中的文件与版本库中文件的差异
 
@@ -65,6 +65,10 @@
 		git log --pretty=oneline 查看显示从最近到最远的提交日志简单日志
 
 		git log -1 显示最近一次的提交信息
+
+		git log --graph  查看分支合并图
+
+		git log --graph --pretty=oneline  查看分支合并图；简单日志
 
 - git status
 
@@ -124,27 +128,42 @@
 
 - git merge 分支名称（现在是在master分支上) -m '备注提交信息'（**合并之前必须都先commit，即工作区和暂存区使用git status 应该是没有文件，即是已经是最新的commit**）
 
-		1. git merge dev 合并指定分支(dev)到当前分支(master)
-		2. git merge --no-ff -m "备注提交信息" 分支名称   （--no-ff）强制禁用Fast forward模式，
-		   Git就会在merge时生成一个新的commit，这样，从分支历史上就可以看出分支信息。上边的方法也可以
-		3. 合并冲突以后解决冲突以后必须：1、git add 2、git commit
+		1. git merge dev       合并指定分支(dev)到当前分支(master)
+		2. git merge --no-ff -m "备注提交信息" 分支名称
+		   --no-ff 强制禁用Fast forward模式， Git就会在merge时生成一个新的commit，这样，从分支历史上就可以看出分支信息。
+		   合并分支时，加上--no-ff参数就可以用普通模式合并，合并后的历史有分支，
+           能看出来曾经做过合并，而fast forward合并就看不出来曾经做过合并。）	
+		3. 合并冲突以后解决冲突以后必须：1、git add 2、git commit, 
+		   解决完成冲突以后，最好直接将分支删除，如果需要，再新建一条分支。
+		   原因是在解决冲突了以后，如果还切换回之前的分支继续开发，
+		   之前的分支还是冲突发生前的内容（解决冲突只解决的主分支master的，分支没有变化，
+           还是冲突前的内容。所以再次提交会报错）。这样的话，在下一次合并分支的时候，还是会发生冲突。
 		4. git merge的冲突判定机制如下：先寻找两个commit的公共祖先  
 		   比较同一个文件分别在ours和theirs下对于公共祖先的差异，然后合并这两组差异
-		   如果双方同时修改了一处地方且修改内容不同，就判定为合并冲突，依次输出双方修改的内容。
+		   如果双方同时修改了一处地方且修改内容不同，就判定为合并冲突，依次输出双方修改的内容
 		5. 如果在dev分支上正在开发一个功能，但是这是master上需要解决一个bug，这时需要切换回master在开发出一个bug分支  
 		   来解决这个bug，但是在dev分支上功能还没有开发完，不能commit。这时解决办法是：第一步、将dev分支上的工作现场  
 		   ‘封存’起来，使用git stash。 第二步、 切换到新的bug分支将bug修改完然后切换回主分支将bug分支合并。  
 		   第三部、 切换回dev分支，将bug分支同时也合并到dev分支（原因是 ： 避免是如果bug分支上修改的东西太多，在最后  
 		   dev开发完成以后，master合并dev分支的时候出现大面积的冲突） 
+		6. 分支策略 : 在实际开发中，我们应该按照几个基本原则进行分支管理：首先，master分支应该是非常稳定的，也就是仅用来发布新版本，
+		   平时不能在上面干活；那在哪干活呢？干活都在dev分支上，也就是说，dev分支是不稳定的，到某个时候，比如1.0版本发布时，
+		   再把dev分支合并到master上，在master分支发布1.0版本；每个人都在dev分支上干活，每个人都有自己的分支，
+  		   时不时地往dev分支上合并就可以了。
 
-    参考 ： **[git合并分支冲突原因](https://zhidao.baidu.com/question/1607297872270021147.html?qbl=relate_question_0&word=%B7%D6%D6%A7%D4%DA%CA%B2%C3%B4%C7%E9%BF%F6%CF%C2%BB%E1%BA%CF%B2%A2%D3%D0%B3%E5%CD%BB "git合并分支冲突原因")**
 
 - git stash
 		
+		先说明2种状态：
+		1、untracked：新建的文件，没有git add filename 的都属于未被git追踪到文件
+		2、未加入到暂存区的文件: 指的是已经被追踪（tracked）过，但是没有加入到暂存区(已经执行过git add的但是这次修改后还没有git add)	
+		说明：git stash 只能“储藏”已被追踪过的文件。意思就是说如果是新添加的文件还没有执行过`git add`的文件，在使用git stash后还是会在
+		工作区中出先，并不会别“储藏”。所以要使用git stash, 请将untrack状态的文件执行git add, 使其可被git追踪
+
 		git stash 把当前工作现场“储藏”起来(如果在一个分支上修改了文件但是因为还没有修改完不能提交的时候，  
 				  如果要开发出一个新的分支解决一个问题，如果不使用git stash， 那么在另一个分支上也是可  
-				  以看到这个分支上修改的内容。  
-				  主要是在不使用git stash的情况下，切换分支是失败的)
+				  以看到这个分支上修改的内容。)
+
 		结论 ： 1.工作区和暂存区是共用的，在各个分支里都可以看到没被stash的文件。
     		   2.在工作区和暂存区的文件都可以stash，pop之后都会出现在工作区
 		
@@ -155,6 +174,22 @@
 		git stash drop  删除stash内容
 
 		git stash pop 恢复工作现场并删除stash内容
+
+		说明 : 假设在dev分支上正在开发，忽然程序出现bug,需要即刻修复，但是dev分支上的任务还没有完成，无法提交合并到master。
+		但是现在就需要在master上创建一个分支bugs去修复这个问题。因为工作区和暂存区对所有分支默认都是共用的，所以在bugs分支
+	    上会执行dev分支上未完成的修改。这样是不允许的。所以我们可以在dev分支中git stash 将dev分支
+		中的工作区和暂存区隐藏起来，这样在别的分支中就看不到dev分支工作区中和暂存区中的已有的工作，这意味着工作区是干净的。我们可以在
+		bugs分支中可以看到工作区是干净的，可以执行任意我们的任务。等待bugs分支开发完成，再切换到master分支，接着将bugs分支merge
+		到master。但是现在我们思考一下，现在主分支是最新的（修复了bugs并且merge上去的)，但是我们的dev分支却还是和未修复bugs的
+		master主分支同步的版本。如果这样的话，在我们开发完dev分支并且合并到master分支上时，就有可鞥会出现问题（除非是增加文件，否则就
+		会出现合并冲突）。如果我们的dev分支版本现在不存在master中存在的bug,则我们完全可以放心。但是如果dev中也会出现像master
+		中出现的bug,则当我们将dev合并到master中时，还是会出现同样的bug。主要是在这种情况下，还会发生合并时候冲突。所以在将bugs
+		合并到master以后，我们也可以选择将bugs分支合并到dev分支中，合并完成之后，现在master和dev中的代码是一样的。但是我们之前
+		在dev中执行了git stash, 还有“储藏”的工作区中已经开发但未提交的内容，当我们执行git stash pop 恢复之前的工作现场并删除
+		stash内容，会发现有冲突发生了（因为现在dev分支和master分支是一样的，现在该文件是已经修复完成的， 但是我们释放的工作区中之前就对
+		该文件做了修改：同一个文件不同的内容，这样就会明显的出现冲突）。这是我们就需要解决这些冲突（其实就是将之前修改的删掉，保留和现在
+		master主分支中的文件一样的信息）。解决完成以后。我们就完全解决了以后dev合并到master中可能存在的冲突，并且在合并以后不会再出现同样
+		的错误
 
 - git branch -D 分支名称
 
