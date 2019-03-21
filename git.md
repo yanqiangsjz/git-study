@@ -1,11 +1,4 @@
-## 1. SVN ##
-1. [链接1](https://www.jianshu.com/p/6b3b7b915332 "链接1")
-2. [链接2](http://keenwon.com/1072.html "链接2") 
-3. [链接3](http://blog.sina.com.cn/s/blog_13cc013b50102wk5m.html "链接3")
-## 2. git（在git bash中操作)
-- [git 教程- 廖雪峰讲git](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000 "git 教程")
-- [git 命令大全](https://blog.csdn.net/jtracydy/article/details/70402663 "git 命令大全")
-- [git fetch 与 git pull](https://www.cnblogs.com/chenlogin/p/6592228.html "git fetch")
+## 1、 git（在git bash中操作)
 
 - 明确一些git中的概念
 		
@@ -41,12 +34,12 @@
 
 		git init [program-name] 新建一个目录，将其初始化为Git代码库
 
-- git clone（默认 ： clone下来的版本只能看到本地的master分支， 如果，想要在dev分支上开发，就必须创建远程
+- git clone（默认 ： clone下来的版本只能看到master分支， 如果，想要在dev分支上开发，就必须创建远程
 origin的dev分支到本地）
 
 		git clone git@github.com:yanqiangsjz/website.git 将远程仓库克隆到本地开发（多人协作开发）
 
-		git checkout -b [branch-name] origin/[branch-name] （创建远程origin的dev分支到本地。  一般远程仓库和本地仓库分支命名一样）
+		git checkout -b [branch] [remote]/[branch] （创建远程[remote]的[branch]分支到本地。  一般远程仓库和本地仓库分支命名一样）
 		
 - git config （--global参数是全局参数，也就是这些命令在这台电脑的所有Git仓库下都有用。  如果不加，那只针对当前的仓库起作用。）
 
@@ -100,7 +93,7 @@ origin的dev分支到本地）
 	
 		git commit -m [message]  暂存区提交到仓库区
 
-		git commit[file1] [file2] ... -m [message]  暂存区的指定文件提交到仓库区
+		git commit [filename1] [filename2] ... -m [message]  暂存区的指定文件提交到仓库区
 
 		git commit -a -m [message]  工作区中修改后，还未使用git add . 命令添加到暂存区中的文件也一并提交上去 
 		相当于git add . 与git commit –m [message] 两句操作合并为一句进行使用。commit完成过后，git status,
@@ -126,7 +119,7 @@ origin的dev分支到本地）
 
 - git blame
 
-		git blame[filename]  查看指定文件是什么人在什么时间修改过
+		git blame [filename]  查看指定文件是什么人在什么时间修改过
 
 - git shortlog
 
@@ -164,9 +157,9 @@ origin的dev分支到本地）
 		
 - git reset (1)
 
-		git reset[file] 重置暂存区的指定文件，与上一次commit保持一致，工作区不变
+		git reset [filename] 重置暂存区的指定文件，与上一次commit保持一致，工作区不变
 
-		git reset--hard  重置暂存区与工作区，与上一次commit保持一致
+		git reset --hard  重置暂存区与工作区，与上一次commit保持一致
 
 		git reset --hard HEAD~2  回退到某个版本(这里是从当前版本回退两个版本)
 
@@ -272,7 +265,7 @@ origin的dev分支到本地）
 
 		git remote add [remote] [url] 增加一个新的远程仓库，并命名 (一般是origin)
 
-		git remote rm origin  删除远程库
+		git remote rm [remote]  删除远程库
 		
 
 - git push 
@@ -336,19 +329,19 @@ origin的dev分支到本地）
 		git tag -d [tagname] 删除本地标签
 
 
--	删除远程标签
+- 删除远程标签
 
 		git tag -d [tagname] -> git push [remote] :refs/tags/[tagname]
 
-		说明：git tag -d [tagname]（先从本地删除）;  git push origin :refs/tags/[tagname]（然后，从远程删除）
+		说明：git tag -d [tagname]（先从本地删除）;  git push [remote] :refs/tags/[tagname]（然后，从远程删除）
 
 
-- git checkout -b[branch] [tag]
+- git checkout -b [branch] [tag]
 
 		git checkout -b[branch] [tagname] 新建一个分支，指向某个tag
 
 
-- git fetch (取回远程仓库的变化，但并不会主动与本地分支合并。这个比git pull 更安全)
+- git fetch (取回远程仓库的变化，但并不会主动与本地分支合并。这个比git pull 更安git全)
 
 		//方法一 例子
 		git fetch origin master //从远程的origin仓库的master分支下载代码到本地的origin master
@@ -367,17 +360,17 @@ origin的dev分支到本地）
 		git branch -d temp//删除temp
 
 
-## 3. gitHub ##
+## 2. gitHub ##
 
 - 将本地git仓库同步到github上
 	
 		1. git remote add [remote] [url]
 		
-		2. git push -u [remote] master
+		2. git push -u [remote] [branch] （指定[remote]为默认主机）
 		
-		3. 以后修改提交到远程库直接git push origin master就可以了
+		3. 以后修改提交到远程库直接git push [remote] [branch]就可以了  (不带任何参数的git push，默认只推送当前分支)
 
-## 4、 git自定义
+## 3、 git自定义
 
 - 忽略特殊文件
 
@@ -397,7 +390,8 @@ origin的dev分支到本地）
 		git config --global alias.unstage 'reset HEAD' (为暂存区的修改撤销回工作区配置别名)
 		git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 		
-		那么配置文件放在哪里呢？
+		那么配置文件放在哪里呢：
+
 		(1) 每个仓库的Git配置文件都放在.git/config文件中
 		(2) 当前用户的Git配置文件放在用户主目录下的一个隐藏文件.gitconfig中 
 		(3) 我们可以直接在配置文件中进行配置
@@ -407,15 +401,3 @@ origin的dev分支到本地）
 - pwd（linux命令）
 	
 		pwd 显示当前目录
-
-##4 webpack
-
-- [webpack中文教程](https://www.webpackjs.com/)
-- [入门教程](https://www.jianshu.com/p/42e11515c10f)
-- [体积优化](https://www.jeffjade.com/2017/08/06/124-webpack-packge-optimization-for-volume/)
-- [CommonsChunkPlugin-1](https://www.cnblogs.com/dong93/p/7655171.html)
-- [CommonsChunkPlugin-2](https://segmentfault.com/a/1190000012828879)
-- [webpack.DllPlugin-1](webpack.DllPlugin)
-- [webpack.DllPlugin-2](https://www.douban.com/note/587230087/)
-- [path与publicPath-1](https://www.jb51.net/article/116443.htm)
-- [path与publicPath-2](https://www.jb51.net/article/139333.htm)
