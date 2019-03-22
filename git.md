@@ -309,6 +309,8 @@ origin的dev分支到本地）
 		
 		原因 ： 没有指定本地dev分支与远程origin/dev分支的链接，根据提示，设置dev和origin/dev的链接：git branch --set-upstream-to=origin/dev dev
 
+		git pull --rebase origin master 远程库同步到本地库  （解决的问题：error: failed to push some refs to ‘git@gitee.com:name/project.git’）
+
 
 -  git branch --set-upstream-to=origin/dev dev
 
