@@ -274,6 +274,8 @@ origin的dev分支到本地）
 		
 		git push [remote] [branch] 将([branch])分支推送到远程库
 
+		git push [remote] --delete [branch] 删除远程分支
+
 		git push [remote] [tagname] 推送某个标签到远程
 
 		git push [remote] --tags 一次性推送全部尚未推送到远程的本地标签
