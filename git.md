@@ -402,6 +402,26 @@ origin的dev分支到本地）
 		
 
 
-- pwd（linux命令）
+
 	
 		pwd 显示当前目录
+
+
+- git 上传项目到github一般流程
+		
+
+		1、本地项目git init -> git add . -> git commit -m '注释'
+		2、在github上创建项目
+		3、git remote add [remote] [url]
+		4、如果在github上创建的项目不包含README.md（即使一个空文件夹），则
+		git push -u origin master 直接就可以了
+		5、如果在github上创建的项目包含README.md，但是在本地的文件夹中
+		没有这个文件， 首先 git pull --rebase origin master（依照远程库README.md内容为准）
+		将远程库同步到本地库，然后 git push -u origin master 就可以了
+		6、如果在github上创建的项目包含README.md, 本地文件夹中也包含这个文件，则
+		git pull origin master --allow-unrelated-histories，然后如果发现有
+		冲突则解决冲突（也可以使用git fetch origin master --allow-unrelated-histories, 
+		然后手动 git merge origin/master）， 然后git add README.md, git commit -m '注释',
+		最后 git push -u origin master
+
+- pwd（linux命令）
