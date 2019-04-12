@@ -404,7 +404,7 @@ origin的dev分支到本地）
 
 
 	
-		pwd 显示当前目录
+		
 
 
 - git 上传项目到github一般流程
@@ -425,3 +425,6 @@ origin的dev分支到本地）
 		最后 git push -u origin master
 
 - pwd（linux命令）
+		
+
+		pwd 显示当前目录
