@@ -345,7 +345,7 @@ origin的dev分支到本地）
 		git checkout -b[branch] [tagname] 新建一个分支，指向某个tag
 
 
-- git fetch (取回远程仓库的变化，但并不会主动与本地分支合并。这个比git pull 更安git全)
+- git fetch (取回远程仓库的变化，但并不会主动与本地分支合并。这个比git pull 更安全)
 
 		//方法一 例子
 		git fetch origin master //从远程的origin仓库的master分支下载代码到本地的origin master
