@@ -1,6 +1,8 @@
-## 1、 git（在git bash中操作)
+## 1、 git（在git bash中操作) 
 
 - 明确一些git中的概念
+
+		-)  此文档是基于git1.0版本
 		
 		-） git版本管理工具中四个区域概念：
 
@@ -55,15 +57,25 @@ origin的dev分支到本地）
 
 		git config --global color.ui true 配置Git显示颜色
 
-- git add 
+- git add (v1.0)
 
 		git add [filename]  添加指定文件到暂存区(表示添加新文件和编辑过的文件不包括删除的文件)
 
-		git add [dir]  添加指定目录到暂存区，包括子目录    
+		git add [dir]  添加指定目录到暂存区，包括子目录 
+
+		git add -A    是git add . 和 git add -u 的并集   
 
 		git add .  添加当前目录的所有文件到暂存区(表示添加新文件和编辑过的文件不包括删除的文件)
 
 		git add -u  表示添加编辑或者删除的文件，不包括新添加的文件
+
+- git add (v2.0)
+
+		"git add <path>" is the same as "git add -A <path>" now, so that
+		"git add dir/" will notice paths you removed from the directory and
+		record the removal.  In older versions of Git, "git add <path>" used
+		to ignore removals.  You can say "git add --ignore-removal <path>" to
+		add only added or modified paths in <path>, if you really want to.
 
 - git rm filename  
 	
