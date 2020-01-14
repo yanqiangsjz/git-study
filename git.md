@@ -157,7 +157,7 @@ origin的dev分支到本地）
 		
 - git reset (1)
 
-		git reset [filename] 重置暂存区的指定文件，与上一次commit保持一致，工作区不变
+		git reset [filename] 重置暂存区的指定文件，与上一次commit保持一致，重新放回工作区
 
 		git reset --hard  重置暂存区与工作区，与上一次commit保持一致
 
@@ -167,7 +167,7 @@ origin的dev分支到本地）
 
 - git reset (2)
 
-		git reset HEAD -- [filename] 把暂存区的修改撤销（unstage），重新放回工作区
+		git reset HEAD -- [filename] 把暂存区的修改撤销（unstage），重新放回工作区  一样
 		
 
 - git branch 分支名称
@@ -428,3 +428,7 @@ origin的dev分支到本地）
 		
 
 		pwd 显示当前目录
+
+- -u
+
+		-u也就是--set-upstream, 代表的是更新默认推送的地方，这里就是默认以后git pull和git push时，都是推送和拉自origin。
