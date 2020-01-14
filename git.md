@@ -89,13 +89,22 @@ origin的dev分支到本地）
 		git rm --cached [filename]	停止追踪文件，但该文件会保留在工作区(untracked状态)
  
 
-- git diff
+- git 
+
+
+
+		git diff --stat 仅仅比较统计信息即文件列表
 
 		git diff [filename] 比较的是工作区文件与暂存区文件的差异
 
-		git diff --cached [filenam] 比较的是暂存区的文件与上一个commit的差异
+		git diff --cached(--staged) [filename] 比较的是暂存区的文件与上一个commit的差异
 		
 		git diff HEAD -- [filename] 比较的是工作区与当前分支最新commit之间的差异
+
+		git diff [commitId1] [commitId2] 比较两次提交之间的差异
+
+		git diff <branch1> <branch2> 在两个分支之间比较
+
 
 - git status
 
@@ -115,7 +124,7 @@ origin的dev分支到本地）
 
 		git log 查看当前分支的版本历史
 		
-		git log --stat 查看commit历史，以及每次commit发生变更的文件
+		git log --stat 查看commit历史，以及每次commit发生变更的文件列表
 
 		git log --pretty=oneline 查看从最近到最远的提交日志简单日志（--pretty=oneline：单行模式）
 
@@ -140,6 +149,10 @@ origin的dev分支到本地）
 - git show
 		
 		git show [commit] 显示某次提交时，文件变化
+
+		git show [commit] --stat 显示某次提交时，提交的文件列表
+
+		git show 显示最后一次的文件改变的具体内容
 		
 		git show [commit]:[filename]  显示某次提交时，某个文件的内容(注意[commit]:[filename]冒号之间没有空格)
 
@@ -167,20 +180,33 @@ origin的dev分支到本地）
 		就必须创建远程([remote])的([branch])到本地
 		
 		
-- git reset (1)
+- git reset (回退)
 
 		git reset [filename] 重置暂存区的指定文件，与上一次commit保持一致，重新放回工作区
+
+		git reset HEAD -- [filename] 把暂存区的修改撤销（unstage），重新放回工作区  与上面一样
 
 		git reset --hard  重置暂存区与工作区，与上一次commit保持一致
 
 		git reset --hard HEAD~2  回退到某个版本(这里是从当前版本回退两个版本)
 
-		git reset --hard commitID 回退到某个版本（commitID是版本号）
+		git reset --hard [commitID] 回退到某个版本（commitID是版本号）
 
-- git reset (2)
 
-		git reset HEAD -- [filename] 把暂存区的修改撤销（unstage），重新放回工作区  一样
+- get revert (反做)
+
+		说明1：git revert是用于“反做”某一个版本，以达到撤销该版本的修改的目的。比如，我们
+		commit了三个版本（版本一、版本二、 版本三），突然发现版本二不行（如：有bug），想
+		要撤销版本二，但又不想影响撤销版本三的提交，就可以用 git revert 命令来反做版本
+		二，生成新的版本四，这个版本四里会保留版本三的东西，但撤销了版本二的东西.
+
+		说明2： `git revert commitId`之后并不会回滚到该id的内容，而是将该id的内容给逆
+		向操作一遍，比如说，a操作添加了“haha”，commit了a，b操作添加了“xixi”，commit b。
+		现在想回滚到只添加了“haha”，需要的是删除“xixi”，也就是逆向操作b，所以应该`git
+		 revert b的commitId`。 `git revert` 应该翻译成“反转、逆转”比较好理解，而不是回
+		退。
 		
+		git revert -n [commitId] 注意：反做可能会发生冲突，解决冲突后add-commit,会生成一个新的版本。
 
 - git branch 分支名称
 
@@ -280,7 +306,7 @@ origin的dev分支到本地）
 		git remote rm [remote]  删除远程库
 		
 
-- git push 
+- git 
 		
 		git push [remote] master  将主分支推送到远程库
 		
@@ -291,6 +317,8 @@ origin的dev分支到本地）
 		git push [remote] [tagname] 推送某个标签到远程
 
 		git push [remote] --tags 一次性推送全部尚未推送到远程的本地标签
+
+		git push -f 强推(一般用于reset后 本地库HEAD指向的版本比远程库的要旧)
 
      	
 - git pull origin 分支名称 （取回远程仓库的变化，并与本地分支合并）
@@ -334,9 +362,9 @@ origin的dev分支到本地）
 
 		git tag [tagname] 为当前HEAD打标签（本地tag）
 		
-		git tag [tagname] commitId（commitId 默认未HEAD; 本地tag）
+		git tag [tagname] [commitId]（commitId 默认未HEAD; 本地tag）
 
-		git tag -a [tagname] -m [message] commitId 为本地tag添加说明
+		git tag -a [tagname] -m [message] [commitId] 为本地tag添加说明
 
 		git tag 查看所有标签信息
 
