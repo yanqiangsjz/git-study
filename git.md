@@ -4,7 +4,7 @@
 
 		-)  此文档是基于git1.0版本
 		
-		-） git版本管理工具中四个区域概念：
+		-) git版本管理工具中四个区域概念：
 
 			(1)Workspace：工作区
 
@@ -174,9 +174,9 @@ origin的dev分支到本地）
 
 - git checkout (3) 
 
-		git checkout -b [branch] [remote]/[branch]
-		说明：
-	 	多人协作时，如果同事从远程库clone时，默认情况下，你的同事只能看到本地的master分支。如果，你的同事要在（[branch]）分支上开发，
+		git checkout -b [branch] [remote]/[branch]  切换到branch分支上,接着跟远程的origin地址上的branch分支关联起来
+
+		说明：多人协作时，如果同事从远程库clone时，默认情况下，你的同事只能看到本地的master分支。如果，你的同事要在（[branch]）分支上开发，
 		就必须创建远程([remote])的([branch])到本地
 		
 		
@@ -192,6 +192,23 @@ origin的dev分支到本地）
 
 		git reset --hard [commitID] 回退到某个版本（commitID是版本号）
 
+- git reset 模式详解
+	
+		1、reset --hard：重置stage区和工作目录:reset --hard 会在重置 HEAD 和branch的同时，重置stage区和工作目录里的内容。当你在 reset 后面加了 
+		--hard 参数时，你的stage区和工作目录里的内容会被完全重置为和HEAD的新位置相同的内容。换句话说，就是你的没有commit的修改会被全部擦掉。
+		**简单的看，--hard就是完全替换为reset的版本信息，你工作区和暂存区也全部同步为reset版本相同的内容**
+
+		2、reset --soft：保留工作目录，并把重置 HEAD 所带来的新的差异放进暂存区。reset --soft 会在重置 HEAD 和 branch 时，
+		保留工作目录和暂存区中的内容，并把重置 HEAD 所带来的新的差异放进暂存区。
+		**简单来看，也就是说--soft命令是撤销指定版本内容的那一次commit（并放进stage/暂存区），其他的东西都不改变。**
+
+		3、reset 不加参数(--mixed)：保留工作目录，并清空暂存区。reset 如果不加参数，那么默认使用 --mixed 参数。
+		它的行为是：保留工作目录，并且清空暂存区。也就是说，工作目录的修改、暂存区的内容以及由 reset 所导致的新的文件差异，都会被放进工作目录。
+		简而言之，就是「把所有差异都混合（mixed）放在工作目录中」。工作目录的内容和 --soft 一样会被保留，但和 --soft 的区别在于，它会把暂存区清空,
+		并把原节点和reset节点的差异的文件放在工作目录，总而言之就是，工作目录的修改、暂存区的内容以及由 reset 所导致的新的文件差异，
+		都会被放进工作目录
+		**简单的看，也就是说--mixed命令是撤销指定版本内容的那一次commit（并放进work/工作区），暂存区的修改也会清空，同时放到工作区。**
+
 
 - get revert (反做)
 
@@ -206,7 +223,33 @@ origin的dev分支到本地）
 		 revert b的commitId`。 `git revert` 应该翻译成“反转、逆转”比较好理解，而不是回
 		退。
 		
-		git revert -n [commitId] 注意：反做可能会发生冲突，解决冲突后add-commit,会生成一个新的版本。
+		git revert -n [commitId] 注意：反做可能会发生冲突，解决冲突后add-commit,会生成一个新的版本。(-n是--no-commit如果不带这个参数会自动提交一条commit)
+		
+		git revert -n commit1..commit2 反做多个commit(左开右闭，即不包括 commit1，但包括 commit2 )
+
+		git revert --abort 取消本次反做
+
+- git revert (merge commit)
+
+		merge commit 和普通 commit 的不同之处在于 merge commit 包含两个 parent commit，代表该 merge commit 是从哪两个 commit 合并过来的。 查看log 如下：
+
+		commit b40e266a3e446e92d8cb00227b703c4f18894bf3
+		Merge: c1a1c33 87b6cb0
+
+		这代表该 merge commit 是从 c1a1c33 和 87b6cb0 两个 commit 合并过来的
+
+		revert merge commit 有一些不同，这时需要添加 -m 选项以代表这次 revert 的是一个 merge commit。
+		**需要指定一个 parent number 标识出"主线"，主线的内容将会保留，而另一条分支的内容将被 revert。**如下
+
+		git revert -m 1 b40e266a3e446e92d8cb00227b703c4f18894bf3  保留主分支
+		git revert -m 1 b40e266a3e446e92d8cb00227b703c4f18894bf3  保留被merge的分支
+
+		**坑： 注意下方图片revert 反坐重新上线问题**
+
+	![](http:////wx1.sinaimg.cn/orj360/d62f62dcly1geisxcj44ej20u012u0xa.jpg)
+
+
+		
 
 - git branch 分支名称
 
@@ -214,13 +257,19 @@ origin的dev分支到本地）
 
 		git branch 列出所有本地分支
 
+		git branch -r 列出所有远程分支
+
 		git branch -a 列出所有本地分支和远程分支
 
-		git branch -r 列出所有远程分支
+		git branch -vv 查看本地分支对应的远程分支(注意：是-vv)
 
 		git branch -d [branch] 删除分支
 
 		git branch -D [branch]  强制删除一个还没有合并（已经commit）的分支
+
+		git branch -m [oldName] [newName] 重命名分支
+
+		git branch -a --contains commitID 根据commitId 查询关联分支
 
 		说明：
 		1、如果一个分支在开发完成以后（分支已经commit）待合并，如果出于某种原因这个分支废弃了，但是这个分支必须删除。git branch -D [branch]
@@ -353,6 +402,8 @@ origin的dev分支到本地）
 
 		git pull --rebase origin master 远程库同步到本地库  （解决的问题：error: failed to push some refs to ‘git@gitee.com:name/project.git’）
 
+		git pull --rebase [remote] [branch] rebase模式 多人合作不了解的慎用
+
 
 -  git branch --set-upstream-to=origin/dev dev
 
@@ -410,9 +461,11 @@ origin的dev分支到本地）
 	
 		1. git remote add [remote] [url]
 		
-		2. git push -u [remote] [branch] （指定[remote]为默认主机）
+		2. git push -u [remote] [branch]（相当于git push [remote] [branch] + git branch --set-upstream-to=origin/[brnach] [origin]）
 		
 		3. 以后修改提交到远程库直接git push [remote] [branch]就可以了  (不带任何参数的git push，默认只推送当前分支)
+
+		4. -u 也就是--set-upstream, 代表的是更新默认推送的地方，这里就是默认以后git pull和git push时，都是推送和拉自origin。
 
 ## 3、 git自定义
 
@@ -468,7 +521,3 @@ origin的dev分支到本地）
 		
 
 		pwd 显示当前目录
-
-- -u
-
-		-u也就是--set-upstream, 代表的是更新默认推送的地方，这里就是默认以后git pull和git push时，都是推送和拉自origin。
