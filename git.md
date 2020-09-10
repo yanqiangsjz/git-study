@@ -178,6 +178,12 @@ origin的dev分支到本地）
 
 		说明：多人协作时，如果同事从远程库clone时，默认情况下，你的同事只能看到本地的master分支。如果，你的同事要在（[branch]）分支上开发，
 		就必须创建远程([remote])的([branch])到本地
+
+- git restore(--staged 简写 -s  --worktree(默认) 简写 -w )
+
+		git restore [filename...] 工作区filename的修改撤销 (同"git checkout(1)"作用一样)
+		
+		git restore --staged [filename...] 将文件从暂存区撤出，但不会撤销文件的更改 (同"git reset [filename]"作用一样)
 		
 		
 - git reset (回退)
@@ -242,11 +248,12 @@ origin的dev分支到本地）
 		**需要指定一个 parent number 标识出"主线"，主线的内容将会保留，而另一条分支的内容将被 revert。**如下
 
 		git revert -m 1 b40e266a3e446e92d8cb00227b703c4f18894bf3  保留主分支
-		git revert -m 1 b40e266a3e446e92d8cb00227b703c4f18894bf3  保留被merge的分支
+		git revert -m 2 b40e266a3e446e92d8cb00227b703c4f18894bf3  保留被merge的分支
 
 		**坑： 注意下方图片revert 反坐重新上线问题**
 
-	![](http:////wx1.sinaimg.cn/orj360/d62f62dcly1geisxcj44ej20u012u0xa.jpg)
+
+	![](https://s1.ax1x.com/2020/09/10/wJDN7R.png)
 
 
 		
