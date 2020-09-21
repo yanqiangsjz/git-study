@@ -351,6 +351,16 @@ origin的dev分支到本地）
 		的错误		
 
 
+- git fsck
+
+		git fsck --lost-found   找到最近的一些删除的提交
+		
+		git show [commitId] 查看删除文件内容
+
+		git merge [commitId] 本地合并误删的文件内容
+
+		说明: stash 之后的内容没有应用到代码上就手欠直接给删除了,上述方法可以恢复数据
+
 - git remote (git给远程库起的默认名称是origin)
 
 		git remote -v 查看远程库的信息
