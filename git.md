@@ -311,6 +311,58 @@ origin的dev分支到本地）
 		第二步、 切换到主分支，新建主分支的bug分支，将bug修改完然后切换回主分支将bug分支合并。 第三部、 切换回dev分支，将bug分支同时
 		合并到dev分支（原因是 ： 避免是如果bug分支上修改的东西太多，在最后  dev开发完成以后，master合并dev分支的时候出现大面积的冲突）
 
+- git rebase 
+
+		git pull --rebase (对应场景：本地与远端同一分支提交历史不一致)
+
+		多个人在同一个分支上协作时，出现冲突是很正常的，比如现在有一个项目由我和A一同开发。我在修复了一个bug以后准备提交，发现git push失败，
+		发现是远端版本更新，说明A在我之前已经提交了，我本地master分支的提交历史已经落后远端了，需要先pull一下，与远端同步后才能push。pull成功，
+		现在使用git log看下一提交历史，发现分叉了！由于我本地master的提交历史和远端的master分支的提交历史不一致，所以git为我进行了自动合并，
+		然后生成了一个新的提交历史。不想看到分叉。这个时候用git rebase就可以解决（简单方案：直接git pull --rebase）
+		
+		git rebase [branch] (branch 可以理解为基分支。 对应场景：不同分支之间的合并)
+		
+		这句命令的意识是：以master为基础，将feature分支上的修改增加到master分支上，并生成新的版本。 如果发生冲突，解决完成后 直接git add . 然后
+		继续执行 git rebase --continue. rebase 完成后切回到主分支，执行 git merge [branch] (当然是先git pull --rebase 再执行merge) 
+		就会出现一条完美的直线
+		思考：
+
+		git rebase -i [commitId|branch] (多个commit，合并为一个完整的commit提交。 再执行git rebase branch )
+		
+		好处：1、易于管理，2、git rebase branch 不用为每个commit都解决一次冲突(如果有冲突的话)
+		
+		解释：如果执行 git rebase -i [commitId], 最终不包括选中的commitId。 是合并commitId之后的所有commit
+
+		解释：如果执行 git rebase -i branch, 其实就是将所在分支的所有commit全部合并。 branch 就是基分支的最后一次commitID。 
+		其实和 git rebase -i [commitId] 是一个意思。 一般这样写，就不用去找commitId了。
+
+		解释： 在一个基本的迭代周期里，你会有很多次commit，有跟配置文件相关的，有跟代码相关的，甚至有跟下次发布fixbug相关的。这些都是
+		你在完成本地开发的时候一个变化记录而已。但是当你需要将你的迭代项目作为一次发布提交时就需要整合所有之前提交的那些很零碎的commit。
+		很多commit这样提交上去之后就很难管理和跟踪，所以我们需要将这些commit 合并为一个总的commit
+
+		再合并的过程中，只需要保留一个commit就可以了，剩下的commitId 将前面的pick 改为 squash 保存退出vim;
+		在继续弹出的vim编辑器中删掉旧的提交信息，在对应位置填写总的log 保存退出即成功。
+
+		
+		一般操作流程： 
+			1、 git pull --rebase, 
+			2、 新建切换分支branch-one、 
+			3、 branch-one 开发 提交、 测试通过、  
+			4、 git rebase -i master(假设master是基分支) 将 branch-one的所有commit 整合为一个commit、 
+			5、 git checkout master、 git pull --rebase 将master 分支更新、 
+			6、 git checkout branch-one、 git rebase master(有冲突解决冲突 git add .   git rebase --continue )、 
+			7、 git checkout master、 git merge branch-one。
+
+- git merge 与 git rebase
+
+		
+		git merge 操作合并分支会让两个分支的每一次提交都按照提交时间（并不是push时间）排序，并且会将两个分支的最新一次commit点
+		进行合并成一个新的commit，最终的分支树呈现非整条线性直线的形式
+
+		git rebase 操作实际上是将当前执行rebase分支的所有基于原分支提交点之后的commit打散成一个一个的patch，并重新生成一个
+		新的commit hash值，再次基于原分支目前最新的commit点上进行提交，并不根据两个分支上实际的每次提交的时间点排序，rebase完成后，
+		切到基分支进行合并另一个分支时也不会生成一个新的commit点，可以保持整个分支树的完美线性
+
 - git stash
 		
 		git stash list 查看使用储藏起来的工作现场
@@ -538,3 +590,69 @@ origin的dev分支到本地）
 		
 
 		pwd 显示当前目录		
+
+
+## 4、 gitFlow（代码管理流程和规范）[点击--->gitflow](https://github.com/nvie/gitflow "gitflow")
+
+
+	Git Flow常用的分支
+
+	Production 分支 (所有在Master分支上的Commit应该Tag)
+	也就是我们经常使用的Master分支，这个分支是最近发布到生产环境的代码，最近发布的Release， 这个分支只能从其他分支合并，不能在这个分支直接修改
+	
+	Develop 分支
+	这个分支是我们是我们的主开发分支，包含所有要发布到下一个Release的代码，这个主要合并与其他分支，比如Feature分支
+	
+	Feature 分支
+	这个分支主要是用来开发一个新的功能，一旦开发完成，我们合并回Develop分支进入下一个Release
+	
+	Release分支
+	当你需要一个发布一个新Release的时候，我们基于Develop分支创建一个Release分支，完成Release后，我们合并到Master和Develop分支
+	
+	Hotfix分支
+	当我们在Production发现新的Bug时候，我们需要创建一个Hotfix, 完成Hotfix后，我们合并回Master和Develop分支，所以Hotfix的改动会进入下一个Release
+
+
+
+
+windows 下载：
+
+1、下载getopt.exe
+getopt.exe的下载链接：[http://downloads.sourceforge.net/gnuwin32/util-linux-ng-2.14.1-bin.zip](http://downloads.sourceforge.net/gnuwin32/util-linux-ng-2.14.1-bin.zip)
+解压，进入bin目录，复制其中的getopt.exe文件到你的git安装目录，例如，D:\Program Files (x86)\Git\bin
+
+2、下载libintl3.dll
+libintl3.dll下载链接：[http://gnuwin32.sourceforge.net/downlinks/libintl-bin-zip.php](http://gnuwin32.sourceforge.net/downlinks/libintl-bin-zip.php)
+解压，进入bin目录，复制libintl3.dll文件到你的git安装目录。
+
+3、下载libiconv2.dll
+libiconv2.dll下载链接：[http://gnuwin32.sourceforge.net/downlinks/libiconv-bin-zip.php](http://gnuwin32.sourceforge.net/downlinks/libiconv-bin-zip.php)
+解压，进入bin目录，复制libiconv2.dll文件到你的git安装目录。
+
+4、获取git flow的代码，打开git bash，输入以下命令：
+
+`git clone -–recursive git://github.com/nvie/gitflow.git`
+
+5、运行git flow的安装脚本
+
+打开windows的cmd（可能需要管理员权限），进入上面的git flow代码目录，键入以下命令：
+
+cd gitflow
+
+cd contrib
+
+msysgit-install.cmd [git的安装目录]
+
+例如，
+
+msysgit-install.cmd “D:\Program Files (x86)\Git”
+
+耐心等待执行完毕。
+
+6、 验证安装
+
+打开git bash，输入 `git flow`
+
+
+
+	
